@@ -62,6 +62,7 @@ def find_idx(n, mapping):
     return -1
 
 # --- KHOI TAO STATE ---
+# Su dung session_state de giu du lieu khi load lai trang
 if 'dau' not in st.session_state:
     for k in ['dau','duoi','tong','hieu','cham']: st.session_state[k] = [0]*10
     st.session_state['bo'] = [0]*15
@@ -70,7 +71,7 @@ if 'dau' not in st.session_state:
     st.session_state['giap'] = [0]*12
     st.session_state['dang'] = [0]*5
     st.session_state.ls = []
-    st.session_state.db = {}
+    st.session_state.db_cloud = {} # Kho luu tru ban sao
     st.session_state.pt = False
 
 # --- LOGIC ---
@@ -113,21 +114,57 @@ def cap_nhat_diem():
 st.markdown("<div class='main-title'>💎 THONG KE 10 BIEN PRO</div>", unsafe_allow_html=True)
 
 with st.sidebar:
-    if st.button("💾 LUU CLOUD"):
-        st.session_state.db[datetime.now().strftime("%H:%M")] = {k: list(st.session_state[k]) for k in ['dau','duoi','tong','hieu','cham','bo','chanle','beto','giap','dang','ls']}
-        st.toast("Da luu du lieu!")
-    if st.session_state.db:
-        sel = st.selectbox("Sao luu:", list(st.session_state.db.keys())[::-1])
-        if st.button("🔄 NAP DU LIEU"):
-            d = st.session_state.db[sel]
-            for k in d: st.session_state[k] = d[k]
-            st.rerun()
-    st.divider()
-    if st.button("🗑️ RESET"): st.session_state.clear(); st.rerun()
+    st.header("⚙️ QUAN LY DU LIEU")
+    
+    # Nut Luu
+    if st.button("💾 LUU CLOUD (BACKUP)", use_container_width=True):
+        now_str = datetime.now().strftime("%H:%M:%S")
+        # Sao chep sau de tranh tham chieu
+        st.session_state.db_cloud[now_str] = {
+            'dau': list(st.session_state.dau), 'duoi': list(st.session_state.duoi),
+            'tong': list(st.session_state.tong), 'hieu': list(st.session_state.hieu),
+            'cham': list(st.session_state.cham), 'bo': list(st.session_state.bo),
+            'chanle': list(st.session_state.chanle), 'beto': list(st.session_state.beto),
+            'giap': list(st.session_state.giap), 'dang': list(st.session_state.dang),
+            'ls': list(st.session_state.ls)
+        }
+        st.success(f"Da luu luc {now_str}!")
 
+    st.divider()
+
+    # Phan Nap du lieu (Chi hien khi co ban luu)
+    if st.session_state.db_cloud:
+        st.subheader("🔄 NAP DU LIEU DA LUU")
+        selected_backup = st.selectbox("Chon ban ghi:", list(st.session_state.db_cloud.keys())[::-1])
+        if st.button("🚀 NAP BAN NAY", type="primary", use_container_width=True):
+            data = st.session_state.db_cloud[selected_backup]
+            st.session_state.dau = list(data['dau'])
+            st.session_state.duoi = list(data['duoi'])
+            st.session_state.tong = list(data['tong'])
+            st.session_state.hieu = list(data['hieu'])
+            st.session_state.cham = list(data['cham'])
+            st.session_state.bo = list(data['bo'])
+            st.session_state.chanle = list(data['chanle'])
+            st.session_state.beto = list(data['beto'])
+            st.session_state.giap = list(data['giap'])
+            st.session_state.dang = list(data['dang'])
+            st.session_state.ls = list(data['ls'])
+            st.toast(f"Da khoi phuc ban {selected_backup}")
+            st.rerun()
+    else:
+        st.info("Chua co ban sao luu nao.")
+
+    st.divider()
+    if st.button("🗑️ RESET TOAN BO", use_container_width=True):
+        st.session_state.clear()
+        st.rerun()
+
+# NHAP SO
 c1, c2 = st.columns([3, 2])
-with c1: st.number_input("So ve:", 0, 99, step=1, format="%02d", key="so_moi_ve")
+with c1: st.number_input("So vua ve:", 0, 99, step=1, format="%02d", key="so_moi_ve")
 with c2: st.write("##"); st.button("CAP NHAT", on_click=cap_nhat_diem, type="primary", use_container_width=True)
+
+st.divider()
 
 t1, t2, t3, t4 = st.tabs(["⚡ Dan", "📊 Bang A", "🔢 Ma Tran B", "🛠️ Sua"])
 
@@ -183,7 +220,7 @@ with t3:
     st.dataframe(pd.DataFrame(m_data, columns=[str(i) for i in range(10)], index=[str(i) for i in range(10)]), use_container_width=True)
 
 with t4:
-    if st.button("💾 LUU SUA"):
+    if st.button("💾 LUU SUA TAY"):
         for k in ['dau','duoi','tong','hieu','cham','bo','chanle','beto','giap','dang']:
             for i in range(len(st.session_state[k])): st.session_state[k][i] = st.session_state[f"e_{k}_{i}"]
         st.rerun()
