@@ -86,13 +86,11 @@ def cap_nhat_diem():
     dv, duv = n // 10, n % 10
     tv, hv = (dv + duv) % 10, (dv - duv + 10) % 10
     
-    # Tim vi tri cac bo moi
     bo_v = find_idx(n, BO_MAP)
     cl_v = find_idx(n, CHAN_LE_MAP)
     bt_v = find_idx(n, BE_TO_MAP)
     gp_v = find_idx(n, GIAP_MAP)
 
-    # Tinh Hang (truoc khi cong diem)
     results = []
     for i in range(100):
         d, du = i // 10, i % 10
@@ -106,7 +104,6 @@ def cap_nhat_diem():
     df = pd.DataFrame(results).sort_values(by=["d", "s"]).reset_index(drop=True)
     h = df[df['s'] == f"{n:02d}"].index[0] + 1
 
-    # Cap nhat vao Session
     for i in range(10):
         st.session_state.dau[i] = 0 if i == dv else st.session_state.dau[i] + 1
         st.session_state.duoi[i] = 0 if i == duv else st.session_state.duoi[i] + 1
@@ -158,11 +155,17 @@ with t1:
              st.session_state.beto[find_idx(i, BE_TO_MAP)] + st.session_state.giap[find_idx(i, GIAP_MAP)]
         l_calc.append({"s": f"{d}{du}", "d": sc})
     df_s = pd.DataFrame(l_calc).sort_values(by=["d", "s"])
-    st.success(", ".join(df_s.head(10)["s"].tolist()))
-    st.info(", ".join(df_s.head(36)["s"].tolist()))
+    
+    # --- PHAN LAY DAN (DA THEM LAI) ---
+    ca, cb = st.columns(2)
+    with ca:
+        n1 = st.number_input("Dan 1 (so luong):", 1, 100, 10, key="n1")
+        st.success(", ".join(df_s.head(int(n1))["s"].tolist()))
+    with cb:
+        n2 = st.number_input("Dan 2 (so luong):", 1, 100, 36, key="n2")
+        st.info(", ".join(df_s.head(int(n2))["s"].tolist()))
 
 with t2:
-    # HIEN THI CAC BIEN KHONG DAU
     for lbl, k, names in [
         ("DAU", "dau", range(10)), ("DUOI", "duoi", range(10)), ("TONG", "tong", range(10)),
         ("HIEU", "hieu", range(10)), ("CHAM", "cham", range(10)), 
