@@ -62,7 +62,6 @@ def find_idx(n, mapping):
     return -1
 
 # --- KHOI TAO STATE ---
-# Su dung session_state de giu du lieu khi load lai trang
 if 'dau' not in st.session_state:
     for k in ['dau','duoi','tong','hieu','cham']: st.session_state[k] = [0]*10
     st.session_state['bo'] = [0]*15
@@ -71,7 +70,7 @@ if 'dau' not in st.session_state:
     st.session_state['giap'] = [0]*12
     st.session_state['dang'] = [0]*5
     st.session_state.ls = []
-    st.session_state.db_cloud = {} # Kho luu tru ban sao
+    st.session_state.db_cloud = {} 
     st.session_state.pt = False
 
 # --- LOGIC ---
@@ -116,10 +115,8 @@ st.markdown("<div class='main-title'>💎 THONG KE 10 BIEN PRO</div>", unsafe_al
 with st.sidebar:
     st.header("⚙️ QUAN LY DU LIEU")
     
-    # Nut Luu
     if st.button("💾 LUU CLOUD (BACKUP)", use_container_width=True):
-        now_str = datetime.now().strftime("%H:%M:%S")
-        # Sao chep sau de tranh tham chieu
+        now_str = datetime.now().strftime("%H:%M:%S %d/%m")
         st.session_state.db_cloud[now_str] = {
             'dau': list(st.session_state.dau), 'duoi': list(st.session_state.duoi),
             'tong': list(st.session_state.tong), 'hieu': list(st.session_state.hieu),
@@ -132,30 +129,38 @@ with st.sidebar:
 
     st.divider()
 
-    # Phan Nap du lieu (Chi hien khi co ban luu)
     if st.session_state.db_cloud:
-        st.subheader("🔄 NAP DU LIEU DA LUU")
+        st.subheader("🔄 QUAN LY BAN SAO")
         selected_backup = st.selectbox("Chon ban ghi:", list(st.session_state.db_cloud.keys())[::-1])
-        if st.button("🚀 NAP BAN NAY", type="primary", use_container_width=True):
-            data = st.session_state.db_cloud[selected_backup]
-            st.session_state.dau = list(data['dau'])
-            st.session_state.duoi = list(data['duoi'])
-            st.session_state.tong = list(data['tong'])
-            st.session_state.hieu = list(data['hieu'])
-            st.session_state.cham = list(data['cham'])
-            st.session_state.bo = list(data['bo'])
-            st.session_state.chanle = list(data['chanle'])
-            st.session_state.beto = list(data['beto'])
-            st.session_state.giap = list(data['giap'])
-            st.session_state.dang = list(data['dang'])
-            st.session_state.ls = list(data['ls'])
-            st.toast(f"Da khoi phuc ban {selected_backup}")
-            st.rerun()
+        
+        c_load, c_del = st.columns(2)
+        with c_load:
+            if st.button("🚀 NAP BAN", type="primary", use_container_width=True):
+                data = st.session_state.db_cloud[selected_backup]
+                st.session_state.dau = list(data['dau'])
+                st.session_state.duoi = list(data['duoi'])
+                st.session_state.tong = list(data['tong'])
+                st.session_state.hieu = list(data['hieu'])
+                st.session_state.cham = list(data['cham'])
+                st.session_state.bo = list(data['bo'])
+                st.session_state.chanle = list(data['chanle'])
+                st.session_state.beto = list(data['beto'])
+                st.session_state.giap = list(data['giap'])
+                st.session_state.dang = list(data['dang'])
+                st.session_state.ls = list(data['ls'])
+                st.toast(f"Da nap {selected_backup}")
+                st.rerun()
+        
+        with c_del:
+            if st.button("🗑️ XOA BAN", use_container_width=True):
+                del st.session_state.db_cloud[selected_backup]
+                st.toast(f"Da xoa ban {selected_backup}")
+                st.rerun()
     else:
-        st.info("Chua co ban sao luu nao.")
+        st.info("Chua co ban sao.")
 
     st.divider()
-    if st.button("🗑️ RESET TOAN BO", use_container_width=True):
+    if st.button("❌ RESET TOAN BO APP", use_container_width=True):
         st.session_state.clear()
         st.rerun()
 
