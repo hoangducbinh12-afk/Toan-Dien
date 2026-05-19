@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 
 # --- CAU HINH GIAO DIEN MOBILE ---
-st.set_page_config(page_title="10 BIEN PRO - UPDATE", layout="centered")
+st.set_page_config(page_title="10 BIẾN PRO", layout="centered")
 
 st.markdown("""
     <style>
@@ -39,9 +39,9 @@ BE_TO_MAP = {
 }
 
 GIAP_MAP = {
-    "Ty": [0, 12, 24, 36, 48, 60, 72, 84, 96], "Suu": [1, 13, 25, 37, 49, 61, 73, 85, 97],
+    "Ti": [0, 12, 24, 36, 48, 60, 72, 84, 96], "Suu": [1, 13, 25, 37, 49, 61, 73, 85, 97],
     "Dan": [2, 14, 26, 38, 50, 62, 74, 86, 98], "Mao": [3, 15, 27, 39, 51, 63, 75, 87, 99],
-    "Thin": [4, 16, 28, 40, 52, 64, 76, 88], "Ty.": [5, 17, 29, 41, 53, 65, 77, 89],
+    "Thin": [4, 16, 28, 40, 52, 64, 76, 88], "Ty": [5, 17, 29, 41, 53, 65, 77, 89],
     "Ngo": [6, 18, 30, 42, 54, 66, 78, 90], "Mui": [7, 19, 31, 43, 55, 67, 79, 91],
     "Than": [8, 20, 32, 44, 56, 68, 80, 92], "Dau": [9, 21, 33, 45, 57, 69, 81, 93],
     "Tuat": [10, 22, 34, 46, 58, 70, 82, 94], "Hoi": [11, 23, 35, 47, 59, 71, 83, 95]
@@ -110,7 +110,7 @@ def cap_nhat_diem():
     st.session_state.ls.insert(0, {"Số": f"{n:02d}", "Hạng": h})
 
 # --- UI ---
-st.markdown("<div class='main-title'>💎 THONG KE 10 BIEN PRO</div>", unsafe_allow_html=True)
+st.markdown("<div class='main-title'>💎 THONG KE 10 BIEN </div>", unsafe_allow_html=True)
 
 with st.sidebar:
     st.header("⚙️ QUAN LY DU LIEU")
